@@ -25,3 +25,28 @@ local function copyFile(src, dest)
         return false
     end
 end
+
+
+
+local function checkAndBackup()
+    local attr = lfs.attributes(sourcePath)
+
+    if attr and attr.size ~= lastSize then
+       
+        local success = copyFile(sourcePath, backupPath .. "/backup_" .. os.date("%Y%m%d%H%M%S") .. ".bak")
+        if success then
+            print("Backup file created:", os.date())
+            lastSize = attr.size
+        else
+            print("something went wrong!!")
+        end
+    else
+        print("No changes to file. Backup aborted!!")
+    end
+end
+
+
+while true do
+    checkAndBackup()
+    os.execute("sleep " .. backupInterval)
+end
